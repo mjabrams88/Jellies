@@ -226,7 +226,7 @@ def process_video( frame_dir, thetas= [0, 90, 180, 270]):
                     this_img[int(pt[1]), int(pt[0])] = [ 255, 0, 0 ]
             plt.imshow(this_img)
             plt.draw()
-            plt.pause(5) # pause how many seconds
+            plt.pause(2) # pause how many seconds
             plt.close()
 
         for coordinate in coordinates:        

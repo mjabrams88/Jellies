@@ -6,7 +6,7 @@ from time       import sleep
 from math       import cos, sin, radians, floor
 
 basePath    = os.path.dirname( os.path.dirname( __file__ ) )
-sys.path.append( basePath + '/Libraries' )
+sys.path.append( basePath + '\Libraries' )
 
 import image_fns as imgFns
 
@@ -27,4 +27,9 @@ for idx, dir in enumerate( all_vid_dirs ):
     ts              = imgFns.process_video( this_frame_dir, thetas = thetas)
     ts['file']      = dir
     all_ts.append( ts )
-print(pd.concat(all_ts))
+
+result  = pd.concat(all_ts)
+print( result )
+
+outFile = basePath + '\Results\data.csv' 
+result.to_csv( outFile )
