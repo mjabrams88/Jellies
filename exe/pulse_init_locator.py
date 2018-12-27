@@ -13,7 +13,7 @@ import image_fns as imgFns
 ######################
 ######  INPUTS  ######
 ######################
-thetas          = [0, 90, 180, 270]
+thetas          = [0, 25, 45, 90, 120, 180, 210, 270]
 video_dir       = r'C:\Users\danie\Dropbox\Projects\Fellyjish\Vidz\Frames'
 
 ######################
@@ -22,7 +22,7 @@ video_dir       = r'C:\Users\danie\Dropbox\Projects\Fellyjish\Vidz\Frames'
 all_vid_dirs    = os.listdir( video_dir )
 all_ts          = [ ]
 for idx, dir in enumerate( all_vid_dirs ):
-    print( ' >> Computing distances for video ' + str( idx ) + ' of ' + str( len( all_vid_dirs ) ) )
+    print( ' >> Computing distances for video ' + str( idx + 1 ) + ' of ' + str( len( all_vid_dirs ) ) )
     this_frame_dir  = video_dir + '\\' + dir
     ts              = imgFns.process_video( this_frame_dir, thetas = thetas)
     ts['file']      = dir

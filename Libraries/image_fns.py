@@ -6,7 +6,7 @@ from time       import sleep
 from math       import cos, sin, radians, floor
 
 # import scipy.signal
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # from matplotlib import cm
 # import skimage.io
 # import cv2
@@ -172,24 +172,28 @@ def get_coord( theta ):
     quad    = floor( theta / 90 )
     theta   = theta % 90
     h       = 480 / 2
-    # pdb.set_trace()
+    # w       = 640 / 2
     if( quad == 0 ):
         x   = h * sin( radians( theta ) )
+        x   = x + h
         y   = h * cos( radians( theta ) )
         y   = h - y
     elif( quad == 1 ):
-        y   = -h * sin( radians( theta ) )
         x   = h * cos( radians( theta ) )
+        x   = x + h
+        y   = -h * sin( radians( theta ) )
         y   = h + (-y)
     elif( quad == 2 ):
         x   = -h * sin( radians( theta ) )
+        x   = h + x
         y   = -h * cos( radians( theta ) )
         y   = h + (-y)
     else:
-        y   = h * sin( radians( theta ) )
         x   = -h * cos( radians( theta ) )
-        y = h - y
-    return( (theta_raw, x + 640 / 2, y) ) #pixels are from the top left
+        x   = h + x
+        y   = h * sin( radians( theta ) )
+        y   = h - y
+    return( (theta_raw, x, y) ) #pixels are from the top left
 
 def process_video( frame_dir, thetas= [0, 90, 180, 270]):
     centers     = [ ]
@@ -205,34 +209,31 @@ def process_video( frame_dir, thetas= [0, 90, 180, 270]):
         img             = io.imread(frame_dir + '\\' + file)
         regions         = measure.regionprops(img)
         this_center     = regions[len(regions)-1].centroid[:2]
-        this_center_x   = int( this_center[0] )
-        this_center_y   = int( this_center[1] )
+        this_center_x   = int( this_center[1] )
+        this_center_y   = int( this_center[0] )
 
         centers.append( this_center )
         centers_x.append( this_center_x )
         centers_y.append( this_center_y )
         
         # img_clean   = locateContours ( img )
-        #use a rolling average center here?
+        # use a rolling average center here?
+        if( N == 1 ):
+            this_img = img.copy()
+            for coordinate in coordinates:
+                line        = createLineIterator( np.array([this_center_x, this_center_y]), np.array([int(coordinate[1]),int(coordinate[2])]), this_img )    
+                for indx, pt in enumerate( line ):
+                    this_img[int(pt[1]), int(pt[0])] = [ 255, 0, 0 ]
+            plt.imshow(this_img)
+            plt.draw()
+            plt.pause(5) # pause how many seconds
+            plt.close()
+
         for coordinate in coordinates:        
             line        = createLineIterator( np.array([this_center_x, this_center_y]), np.array([int(coordinate[1]),int(coordinate[2])]), img )
             for indx, pt in enumerate( line ):
-                gradient    = img[int(pt[0]), int(pt[1])][0]
+                gradient    = img[int(pt[1]), int(pt[0])][0]
                 if( gradient < 50 ):
                     jellyadii[str(coordinate[0])].append( indx )
                     break
     return( pd.DataFrame( jellyadii ) )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
