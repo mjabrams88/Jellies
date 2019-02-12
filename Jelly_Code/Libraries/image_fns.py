@@ -1,4 +1,9 @@
-import sys, os, pdb, shutil, datetime as dt, pandas as pd, numpy as np, cv2, time
+import sys, os, pdb, shutil, datetime as dt, pandas as pd, numpy as np, time, matplotlib.pyplot as plt
+try:
+	import cv2
+except ImportError:
+	os.system( 'pip install opencv-python' ) #do this since its a fairly obscure package with weird naming convention
+	import cv2
 
 from skimage    import io, color, measure, draw, img_as_bool
 from scipy      import optimize
@@ -6,31 +11,8 @@ from time       import sleep
 from math       import cos, sin, radians, floor, sqrt
 from bisect     import bisect
 
-# import scipy.signal
-import matplotlib.pyplot as plt
-# from matplotlib import cm
-# import skimage.io
-# import cv2
-# import pandas as pd
 
-###### A whole bunch of skimage stuff
-# import skimage.feature
-# import skimage.filter
-# import skimage.filter.rank
-# import skimage.io
-# import skimage.morphology
-# import skimage.restoration
-# import skimage.segmentation
-
-def video_to_frames(input_loc, output_loc):
-    """Function to extract frames from input video file
-    and save them as separate frames in an output directory.
-    Args:
-        input_loc: Input video file.
-        output_loc: Output directory to save the frames.
-    Returns:
-        None
-    """
+def video_to_frames(input_loc, output_loc):    
     try:
         os.mkdir(output_loc)
     except OSError:
@@ -269,8 +251,24 @@ def process_video( frame_dir, thetas= [0, 90, 180, 270]):
             this_center_y       = int(np.mean(centers_y[max(0,len(centers_y)-500):]))            
             print( ' | Rolling avg. center location: (' + str( this_center_x ) + ', ' + str( this_center_y ) + ')' )
         
-        coordinates = [ get_coord( t, this_center_x, this_center_y ) for t in thetas ]
+        if( N % 10000 == 0 ):
+            if( not os.path.exists( os.path.dirname( basePath ) + '\Results\Time Series\inProgress' ) ):
+                os.mkdir( os.path.dirname( basePath ) + '\Results\Time Series\inProgress' )
+                
+            #write intermediate output to a temp excel location; if this is slow just tweak to write incremental data only
+            xlFns.to_excel( pd.DataFrame( jellyadii ),
+                            file                    = os.path.dirname( basePath ) + '\Results\Time Series\inProgress\\' + frame_dir.replace(' ', '_') + '.xlsx',
+                            masterFile              = os.path.dirname( basePath ) + '\Results\Time Series\Time_Series_vMaster.xlsx',
+                            allowMasterOverride     = False,
+                            promptIfLocked          = True,
+                            xlsxEngine              = 'xlwings', #xlsxwriter, openpyxl
+                            closeFile               = True,
+                            topLeftCell             = {},
+                            batchSize               = 10000,
+                    )
         
+        coordinates = [ get_coord( t, this_center_x, this_center_y ) for t in thetas ]
+
         show_frames = [13, 14, 15]
         # img_clean   = locateContours ( img )
         this_img = img.copy()
