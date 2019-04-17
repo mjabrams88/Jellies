@@ -12,4 +12,5 @@ This is a starter README to describe the rationale, code workflow, and documenta
 
 ## Todo -or- known bugs 
 
-**Coming soon...**
+1) Successfully send python file to savio cluster.
+2) NEXT todo...l
