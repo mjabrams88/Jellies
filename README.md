@@ -2,6 +2,10 @@
 
 This is a starter README to describe the rationale, code workflow, and documentation for the Jellies radial project. 
 
+NOTE:
+**CLI.md**
+helpful command-line and git specific commands
+
 ## What is this? 
 
 **Coming soon...**
