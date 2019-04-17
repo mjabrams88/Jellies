@@ -27,4 +27,5 @@ $ git clone (link to repo)
 ex: indicate which files to mark in the checkpoint 
 
 $ git add (name of file)
+
 $ git add . (saves all things down from current directory)
